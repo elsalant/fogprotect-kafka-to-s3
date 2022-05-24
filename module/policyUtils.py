@@ -11,20 +11,25 @@ class PolicyUtils():
     def get_policies(self):
         #TODO
         policies = ""
-        return(policies)
-
-    def apply_policy(self, jsonList):
-        policies = self.get_policies
-        df = pd.json_normalize(jsonList)
-        self.logger.info(f'inside apply_policy. Length policies = ', str(len(policies)), " type(policies) = ", str(type(policies)))
-    #    for policy in policies:
         if TEST:
-            policy = dict(policies['dict_item'])
-        else:
-            policy = policies
+            cmDict = {'dict_item': [
+                ('transformations',
+                 [])]}
+  #               [{'action': 'BlockResource', 'description': 'redact columns: [valueQuantity.value id]',
+  #                 'columns': ['valueQuantity.value', 'id'], 'options': {'redactValue': 'XXXXX'}},
+  #                {'action': 'ReturnIntent', 'description': 'return intent',
+  #                 'columns': ['N/A'], 'intent': 'research'}]), ('assetID', 'sql-fhir/observation-json')]}
+            policies = dict(cmDict['dict_item'])
+        return policies
+
+    def apply_policy(self, jsonDict):
+        ## The use case does not have any policies on filtering the Kafka data.  The policies should no transformations
+        policy = self.get_policies()
+        df = pd.json_normalize(jsonDict)
+        self.logger.info(f'inside apply_policy. Length policies = ', str(len(policy)), " type(policy) = ", str(type(policy)))
         self.logger.info(f'policy = ', str(policy))
-        if policy['transformations'][0] == None:
-            self.logger.warning(f'No transformations found!')
+        if len(policy['transformations']) == 0:
+            self.logger.warning(f'No actions found!')
             return (str(df.to_json()))
         action = policy['transformations'][0]['action']
         if action == '':

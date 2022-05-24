@@ -62,15 +62,6 @@ class KafkaUtils:
         self.logger.info(f"Connection to Kafka succeeded! " + self.kafkaHost)
         return(producer)
 
-    def readFromKafka(self):
-        for message in self.consumer:
-            print("Read from from kafka topic " + self.kafkaMsgTopic + " at host: " + self.kafkaHost)
-            if TEST:
-                resourceDict = json.loads(message)
-            else:
-                resourceDict = message.value
-        return resourceDict
-                
     def writeToKafka(self, jString):
         if self.kafkaDisabled:
             self.logger.info(f"Kafka topic: " + self.kafkaLogTopic + " log string: " + jString)

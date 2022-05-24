@@ -3,23 +3,27 @@ import uuid
 import tempfile
 
 BUCKET_PREFIX = '-fogprotect-'
+SEED = 'sm' # for file name
+
 class S3utils:
 
-    def __init__(self, logger, s3_access_key,s3_secret_key, s3_URL):
+    def __init__(self, logger, s3_access_key,s3_secret_key, safeBucket, unsafeBucket, s3_URL):
         self.connection = boto3.resource(
             's3',
             aws_access_key_id=s3_access_key,
             aws_secret_access_key=s3_secret_key,
+            safe_bucket = safeBucket,
+            unsafe_bucket = unsafeBucket,
             endpoint_url=s3_URL
         )
         self.logger = logger
 
-    def contentToFile(self, content, fnameSeed):
-        random_file_name = ''.join([str(uuid.uuid4().hex[:6]), fnameSeed])
+    def contentToFile(self, content):
+        random_file_name = ''.join([str(uuid.uuid4().hex[:6]), SEED])
         try:
             writeLine = str(content)
             tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=".csv", mode='w+t' )
-            print("Created file is:", tempFile.name)
+            self.logging.INFO("Created file is:", tempFile.name)
             tempFile.write(writeLine)
             tempFile.seek(0)   # Rewind - is this necessary?
         except:
@@ -27,23 +31,20 @@ class S3utils:
             raise IOError("error writing content to temp file")
         return tempFile
 
-    def write_to_S3(self, patientId, values):
-        # Store resources in a bundle prefixed by the resource type
-        bucketNamePrefix = (patientId + BUCKET_PREFIX).lower()
-
-        matchingBucket = self.get_resource_buckets(bucketNamePrefix)
+    def write_to_S3(self, bucketName, data):
+        matchingBucket = self.get_resource_buckets(bucketName)
         if len(matchingBucket) > 1:
             raise AssertionError('Too many matching buckets found! ' + len(matchingBucket) + ' ' + str(matchingBucket))
         elif len(matchingBucket) == 1:
             bucketName = matchingBucket[0]
             self.logger.info(f'matching bucket found: ' + bucketName)
         else:
-            bucketName, response = self.create_bucket(bucketNamePrefix, connection)
-            self.logger.info(f"new bucket being created:" + bucketNamePrefix)
-        tempFile = self.contentToFile(values, patientId)
+            bucketName, response = self.create_bucket(bucketName, self.connection)
+            self.logger.info(f"new bucket being created:" + bucketName)
+        tempFile = self.contentToFile(data)
         # Generate a random prefix to the resource type
-        fName = ''.join([str(uuid.uuid4().hex[:6]), patientId])
-        self.logger.info(f"fName = " + fName + "patientId = " + patientId)
+        fName = ''.join([str(uuid.uuid4().hex[:6]), SEED])
+        self.logger.info(f"fName = " + fName + "patientId = " + SEED)
         self.write_to_bucket(bucketName, tempFile, fName)
         self.logger.info(f"information written to bucket ", bucketName, ' as ', fName)
         return None
