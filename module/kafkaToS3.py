@@ -22,7 +22,7 @@ FIXED_SCHEMA_ORG  = 'missing org'
 logger = logging.getLogger(__name__)
 cmDict = {}
 
-def getSecretKeys(secret_name, secret_namespace, safe_bucket, unsafe_bucket ):
+def getSecretKeys(secret_name, secret_namespace):
     try:
         config.load_incluster_config()  # in cluster
     except:
@@ -37,7 +37,7 @@ def getSecretKeys(secret_name, secret_namespace, safe_bucket, unsafe_bucket ):
         return(accessKeyID.decode('ascii'), secretAccessKey.decode('ascii'),
                safeBucket.decode('ascii'), unsafeBucket.decode('ascii'))
     else:
-        return("change-me", "change-me", "change-me", "change-me")
+        return("change-me", "change-me", "safe-change-me", "unsafe-change-me")
 
 def readConfig(CM_PATH):
     if not TEST:
@@ -66,7 +66,7 @@ def main():
 
     kafkaUtils = KafkaUtils(logger)
     policyUtils = PolicyUtils(logger)
-    s3Utils = S3utils(logger)
+
     cmDict = readConfig(CM_PATH)
 
     # Get the secrets for S3 connection and then fire up the S3 object
@@ -75,8 +75,8 @@ def main():
     safe_bucket = cmDict['SAFE_BUCKET']
     unsafe_bucket = cmDict['UNSAFE_BUCKET']
     s3_URL = cmDict['S3_URL']
-    keyId, secretKey, safeBucket, unsafeBucket = getSecretKeys(secret_fname, secret_namespace, safe_bucket, unsafe_bucket)
-    S3utils(logger, keyId, secretKey, safeBucket, unsafeBucket, s3_URL)
+    keyId, secretKey, safeBucket, unsafeBucket = getSecretKeys(secret_fname, secret_namespace)
+    s3Utils = S3utils(logger, keyId, secretKey, s3_URL)
 
 # Listen on the Kafka queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
     for message in kafkaUtils.consumer:
@@ -85,6 +85,8 @@ def main():
 # The environment variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write
         situationStatus = os.getenv('SITUATION_STATUS')
+        if TEST:
+            situationStatus = 'safe'
         assert(situationStatus)
         if situationStatus.lower() == 'safe':
             bucketName = safeBucket

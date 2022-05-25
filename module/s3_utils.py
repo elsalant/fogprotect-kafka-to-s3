@@ -7,13 +7,11 @@ SEED = 'sm' # for file name
 
 class S3utils:
 
-    def __init__(self, logger, s3_access_key,s3_secret_key, safeBucket, unsafeBucket, s3_URL):
+    def __init__(self, logger, s3_access_key,s3_secret_key, s3_URL):
         self.connection = boto3.resource(
             's3',
             aws_access_key_id=s3_access_key,
             aws_secret_access_key=s3_secret_key,
-            safe_bucket = safeBucket,
-            unsafe_bucket = unsafeBucket,
             endpoint_url=s3_URL
         )
         self.logger = logger
