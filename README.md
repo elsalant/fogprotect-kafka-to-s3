@@ -52,12 +52,9 @@ make docker-push
 export HELM_EXPERIMENTAL_OCI=1  
 helm registry login -u elsalant -p \<PASSWORD> ghcr.io
 
-Package the chart:
-helm package ibmfhir-orig -d /tmp
-Push to repo: 
-helm push /tmp/ibmfhir_orig-0.2.0.tgz oci://ghcr.io/elsalant
-helm package sqlToFHIR -d /tmp
-helm push /tmp//tmp/sql-to-fhir-chart-0.0.5.tgz oci://ghcr.io/elsalant
+Package the chart: (cd charts)
+helm package kafka-to-s3 -d /tmp
+helm push /tmp/kakfa-to-s3-chart-0.0.1.tgz oci://ghcr.io/elsalant
 
 ##### Development hints
 1. files/conf.yaml controls the format of the policy evaluation.  This will be written into a file mounted inside the pod running in the fybrik-blueprints namespace.
