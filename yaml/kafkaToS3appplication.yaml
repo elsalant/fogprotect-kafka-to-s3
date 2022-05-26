@@ -1,0 +1,21 @@
+apiVersion: app.fybrik.io/v1alpha1
+kind: FybrikApplication
+metadata:
+  name: kafkaToS3
+  namespace: kafka-s3
+  labels:
+    app: kafka2s3
+    requestedBy: EliotSalant
+spec:
+  selector: 
+    workloadSelector:
+      matchLabels:  
+        app: kafkaTos3
+  appInfo:
+   intent: research
+  data:
+    - dataSetID: "kafka-s3/kafka-message-schema"
+      requirements:
+        interface: 
+          protocol: s3
+          dataformat: json
