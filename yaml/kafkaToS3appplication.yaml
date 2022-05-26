@@ -1,7 +1,7 @@
 apiVersion: app.fybrik.io/v1alpha1
 kind: FybrikApplication
 metadata:
-  name: kafkaToS3
+  name: kafka2s3
   namespace: kafka-s3
   labels:
     app: kafka2s3
@@ -14,7 +14,7 @@ spec:
   appInfo:
    intent: research
   data:
-    - dataSetID: "kafka-s3/kafka-message-schema"
+    - dataSetID: "kafka-s3/sm-kafka-data"
       requirements:
         interface: 
           protocol: s3

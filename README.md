@@ -3,6 +3,9 @@
 
 Do once:  make sure helm v3.7+ is installed
 > helm version
+> 
+Setting up a kind cluster - if required:
+> kind create cluster --name fogprotect-sm
 
 1. Install fybrik from the instructions in: https://fybrik.io/v0.6/get-started/quickstart/
 2. Start the Kafka server:  
@@ -13,16 +16,17 @@ kubectl create namespace kafka-s3
 git pull https://github.com/elsalant/fogprotect-kafka-to-s3.git
 5. Install the policy:  
 \<ROOT>/scripts/applyPolicy.sh
-6. Apply the FHIR server secrets and permissions  
-\<ROOT>/sqlToFHIR/deployPermissions.sh 
-7. kubectl edit cm cluster-metadata -n fybrik-system
+6. Edit \<ROOT>/yaml/s3-credentials.yaml to input the correct S3 tokens
+7. Apply the S3 secrets and permissions  
+\<ROOT>/scripts/deployS3secrets.sh 
+8. kubectl edit cm cluster-metadata -n fybrik-system
 and change theshire to UK
-8. kubectl apply -f \<ROOT>/sqlToFHIR/asset.yaml
-9. Apply the module
+9. kubectl apply -f \<ROOT>/yaml/asset.yaml
+10. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
-10. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
+11. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
-11. Test
+12. Test
 - a) Send events to the Kafka queue  
 kubectl port-forward svc/kafka -n fybrik-system 9002:9002 
 kafka-console-consumer --topic sm --from-beginning --bootstrap-server localhost:9092

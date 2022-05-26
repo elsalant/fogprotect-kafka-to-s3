@@ -1,27 +1,26 @@
 apiVersion: katalog.fybrik.io/v1alpha1
 kind: Asset
 metadata:
-  name: observation-json
-  namespace: sql-fhir
+  name: sm-kafka-data
+  namespace: kafka-s3
 spec:
   details:
     dataFormat: json
     connection:
-      name: fhir
-      fhir:
-        fhirServer: ibmfhir
-        port: 9443
-        namespace: sql-fhir
-        secretRef: fhir-credentials
+      name: kafka
+      kafka:
+        kafka_topic_name: sm
+        kafka_bootstrap_servers: "kafka.fybrik-system:9092"
+        namespace: fybrik-system
   secretRef:
-      name: fhir-credentials
+      name: s3-credentials
   metadata:
-    name: FHIR server
+    name:  s3-store
     geography: UK
     tags:
-      healthcare: true
+      healthcare: false
     columns:
       - name: id
         tags:
           PII: true
-          blocked: false
+          blocked: true
