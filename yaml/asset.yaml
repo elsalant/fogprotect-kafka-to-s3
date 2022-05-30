@@ -7,7 +7,7 @@ spec:
   details:
     dataFormat: json
     connection:
-      name: kafka
+      type: kafka
       kafka:
         kafka_topic_name: sm
         kafka_bootstrap_servers: "kafka.fybrik-system:9092"
@@ -18,7 +18,7 @@ spec:
     name:  s3-store
     geography: UK
     tags:
-      healthcare: false
+      sm: true
     columns:
       - name: id
         tags:

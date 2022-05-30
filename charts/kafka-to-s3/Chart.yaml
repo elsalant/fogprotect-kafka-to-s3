@@ -1,5 +1,5 @@
 apiVersion: v2
-name: kakfa-to-s3-chart
+name: kafka-to-s3-chart
 description: A Helm chart for installing a module to copy from a Kafka topic to S3
 
 # A chart can be either an 'application' or a 'library' chart.

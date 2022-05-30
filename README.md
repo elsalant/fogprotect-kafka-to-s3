@@ -21,12 +21,14 @@ git pull https://github.com/elsalant/fogprotect-kafka-to-s3.git
 \<ROOT>/scripts/deployS3secrets.sh 
 8. kubectl edit cm cluster-metadata -n fybrik-system
 and change theshire to UK
-9. kubectl apply -f \<ROOT>/yaml/asset.yaml
-10. Apply the module
+9. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
+10. [FIX]  kubectl apply -f charts/kafka-to-s3/templates/situation-status.yaml
+11. kubectl apply -f \<ROOT>/yaml/asset.yaml
+12. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
-11. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
+13. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
-12. Test
+14. Test
 - a) Send events to the Kafka queue  
 kubectl port-forward svc/kafka -n fybrik-system 9002:9002 
 kafka-console-consumer --topic sm --from-beginning --bootstrap-server localhost:9092
@@ -58,7 +60,7 @@ helm registry login -u elsalant -p \<PASSWORD> ghcr.io
 
 Package the chart: (cd charts)
 helm package kafka-to-s3 -d /tmp
-helm push /tmp/kakfa-to-s3-chart-0.0.1.tgz oci://ghcr.io/elsalant
+helm push /tmp/kafka-to-s3-chart-0.0.1.tgz oci://ghcr.io/elsalant
 
 ##### Development hints
 1. files/conf.yaml controls the format of the policy evaluation.  This will be written into a file mounted inside the pod running in the fybrik-blueprints namespace.
