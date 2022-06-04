@@ -14,7 +14,7 @@ export HELM_HOSTNAME ?= ghcr.io
 export REPO_HOSTNAME ?= ghcr.io
 export REPO_USERNAME ?= elsalant
 
-DOCKER_IMG_NAME ?= kakfa-to-s3
+DOCKER_IMG_NAME ?= kafka-to-s3
 CHART_IMG_NAME ?= kafka-to-s3-chart
 DOCKER_FILE ?= Dockerfile
 DOCKER_CONTEXT ?= .

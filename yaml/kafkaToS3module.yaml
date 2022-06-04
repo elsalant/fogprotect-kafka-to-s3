@@ -32,9 +32,9 @@ spec:
             protocol: s3
             dataformat: json
   chart:
-    name: ghcr.io/elsalant/kafka-to-s3:0.0.1
+    name: ghcr.io/elsalant/kafka-to-s3:v1
     values:
-      image.tag: v1
+      image.tag: 0.0.1
   statusIndicators:
     - kind: StreamTransfer
       successCondition: status.status == SUCCEEDED
