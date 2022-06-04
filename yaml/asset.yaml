@@ -7,7 +7,7 @@ spec:
   details:
     dataFormat: json
     connection:
-      type: kafka
+      name: kafka
       kafka:
         kafka_topic_name: sm
         kafka_bootstrap_servers: "kafka.fybrik-system:9092"
