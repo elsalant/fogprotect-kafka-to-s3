@@ -29,6 +29,7 @@ def getSecretKeys(secret_name, secret_namespace):
         config.load_kube_config()   # useful for testing outside of k8s
     v1 = client.CoreV1Api()
     if TEST == False:
+        logger.info('secret_name = ' + secret_name + ' secret_namespace = ' + secret_namespace)
         secret = v1.read_namespaced_secret(secret_name, secret_namespace)
         accessKeyID = base64.b64decode(secret.data['access_key'])
         secretAccessKey = base64.b64decode(secret.data['secret_key'])
@@ -69,9 +70,11 @@ def main():
     safeBucketName = cmDict['SAFE_BUCKET']
     unsafeBucketName = cmDict['UNSAFE_BUCKET']
     msg_topic = cmDict['MSG_TOPIC']
+    logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
+                ' safeBucketName = ' + str(safeBucketName) + ' unsafeBucketName = ' + str(unsafeBucketName))
 
     s3_URL = cmDict['S3_URL']
-    keyId, secretKey, safeBucket, unsafeBucket = getSecretKeys(secret_fname, secret_namespace)
+    keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
     s3Utils = S3utils(logger, keyId, secretKey, s3_URL)
     kafkaUtils = KafkaUtils(logger, msg_topic)
     policyUtils = PolicyUtils(logger)
@@ -87,9 +90,9 @@ def main():
             situationStatus = 'safe'
         assert(situationStatus)
         if situationStatus.lower() == 'safe':
-            bucketName = safeBucket
+            bucketName = safeBucketName
         elif situationStatus.lower() == 'unsafe':
-            bucketName = unsafeBucket
+            bucketName = unsafeBucketName
         else:
             raise Exception('situationStatus = '+situationStatus)
         s3Utils.write_to_S3(bucketName, filteredData)

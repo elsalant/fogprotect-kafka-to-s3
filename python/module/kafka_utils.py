@@ -10,6 +10,8 @@ TEST = False
 DEFAULT_KAFKA_LOG_TOPIC = 'logging'
 if TEST:
     DEFAULT_KAFKA_HOST = 'localhost:9092'
+else:
+    DEFAULT_KAFKA_HOST = 'kafka.fybrik-system:9092'
 
 class KafkaUtils:
     def __init__(self, logger, msgTopic):

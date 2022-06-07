@@ -60,6 +60,8 @@ copy:
     credentialLocation: 
       namespace: fybrik-system
       secret_file: credentials
+      safe_bucket: safe_bucketname
+      unsafe_bucket: unsafe_bucketname
     format: json
     vault:
       address:

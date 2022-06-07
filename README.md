@@ -30,7 +30,7 @@ kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
 14. Test
 - a) Send events to the Kafka queue  
-kubectl port-forward svc/kafka -n fybrik-system 9002:9002 
+kubectl port-forward svc/kafka -n fybrik-system 9092:9092  
 kafka-console-consumer --topic sm --from-beginning --bootstrap-server localhost:9092
 {"DOB": "01/02/1988", "FirstName": "John", "LastNAME": "Jones"}
 - b) Port-forward pod in fybrik-blueprints  

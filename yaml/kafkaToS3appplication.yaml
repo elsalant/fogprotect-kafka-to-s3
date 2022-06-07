@@ -17,5 +17,5 @@ spec:
     - dataSetID: "kafka-s3/sm-kafka-data"
       requirements:
         interface: 
-          protocol: s3
+          protocol: kafka
           dataformat: json
