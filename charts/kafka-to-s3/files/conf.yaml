@@ -4,16 +4,16 @@ data:
 {{- end }}
 {{- if .Values.copy -}}
  {{- if .Values.copy.source.connection.kafka }}
-   MSG_TOPIC: {{ .Values.copy.source.connection.kafka.topic_name }}
-   KAFKA_HOST: {{ .Values.copy.source.connection.kafka.bootstrap_servers }}  
+   MSG_TOPIC: {{ .Values.copy.source.connection.kafka.kafka_topic_name }}
+   KAFKA_HOST: {{ .Values.copy.source.connection.kafka.kafka_bootstrap_servers }}
  {{- end }}
  {{- if .Values.copy.destination.connection.s3 }}
    VAULT_SECRET_PATH: {{ .Values.copy.destination.vault.secretPath }}
    SECRET_NSPACE: {{ .Values.copy.destination.credentialLocation.namespace }}
    SECRET_FNAME: {{ .Values.copy.destination.credentialLocation.secret_file }}
    S3_URL: {{if .Values.copy.destination.connection.s3.endpoint}}http://{{end}}{{ .Values.copy.destination.connection.s3.endpoint }}
-   SAFE_BUCKET: {{ .Values.copy.destination.credentialLocation.safe_bucket }}
-   UNSAFE_BUCKET: {{ .Values.copy.destination.credentialLocation.unsafe_bucket }}
+   SAFE_BUCKET: {{ .Values.copy.destination.s3.safe_bucket }}
+   UNSAFE_BUCKET: {{ .Values.copy.destination.s3.unsafe_bucket }}
  {{- end }}
  {{- if .Values.copy.transformations }}
    transformations: 

@@ -24,18 +24,16 @@ and change theshire to UK
 9. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
 10. [FIX]  kubectl apply -f charts/kafka-to-s3/templates/situation-status.yaml
 11. kubectl apply -f \<ROOT>/yaml/asset.yaml
-12. Apply the module
+12. Edit s3-account.yaml and configure the endpoint for your s3 store, then apply:
+kubectl apply -f s3-account.yaml
+13. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
-13. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
+14. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
 14. Test
 - a) Send events to the Kafka queue  
-kubectl port-forward svc/kafka -n fybrik-system 9092:9092  
-kafka-console-consumer --topic sm --from-beginning --bootstrap-server localhost:9092
-{"DOB": "01/02/1988", "FirstName": "John", "LastNAME": "Jones"}
-- b) Port-forward pod in fybrik-blueprints  
- kubectl get pods -n fybrik-blueprints  
-eg: kubectl port-forward pod/\<POD ID> -n fybrik-blueprints 5559:5559
+kubectl apply -f kafka_producer.yaml 
+
 
 #### Hints
 To test redaction: pick a field in the resource (e.g. "id") and set the tag in the asset.yaml file to "PII".
@@ -53,6 +51,10 @@ make docker-build
 
 Push the image to Docker package repo  
 make docker-push
+
+1a. To build kafka-producer image:
+ make docker-build-producer
+ make docker-push-producer
 
 2. Push the Helm chart to the repo
 export HELM_EXPERIMENTAL_OCI=1  

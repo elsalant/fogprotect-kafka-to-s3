@@ -35,8 +35,8 @@ copy:
     connection:
       name: kafka
       kafka:
-        bootstrap_servers: 'kafka.fybrik-system:9092'
-        topic_name: sm
+        kafka_topic_name: ""
+        kafka_bootstrap_servers: ""
     credentialLocation: 
     format: json
   transformations:
@@ -54,14 +54,14 @@ copy:
       name: s3
       s3:
         bucket: 
-        endpoint: 
+        endpoint: ""
+        safe_bucket: ""
+        unsafe_bucket: ""
         object_key: 
       type: 2
     credentialLocation: 
       namespace: fybrik-system
       secret_file: credentials
-      safe_bucket: safe_bucketname
-      unsafe_bucket: unsafe_bucketname
     format: json
     vault:
       address:

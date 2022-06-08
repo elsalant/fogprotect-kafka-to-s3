@@ -82,6 +82,7 @@ def main():
 # Listen on the Kafka queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
     for message in kafkaUtils.consumer:
         messageDict = message.value
+        logger.info('Read from Kafka: ' + messageDict)
         filteredData = policyUtils.apply_policy(messageDict)
 # The environment variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write
