@@ -28,14 +28,14 @@ def getSecretKeys(secret_name, secret_namespace):
     except:
         config.load_kube_config()   # useful for testing outside of k8s
     v1 = client.CoreV1Api()
-    if TEST == False:
+    if TEST:
+        return ("change-me", "change-me")
+    else:
         logger.info('secret_name = ' + secret_name + ' secret_namespace = ' + secret_namespace)
         secret = v1.read_namespaced_secret(secret_name, secret_namespace)
         accessKeyID = base64.b64decode(secret.data['access_key'])
         secretAccessKey = base64.b64decode(secret.data['secret_key'])
         return(accessKeyID.decode('ascii'), secretAccessKey.decode('ascii'))
-    else:
-        return("change-me", "change-me")
 
 def readConfig(CM_PATH):
     if not TEST:
@@ -72,8 +72,9 @@ def main():
     msg_topic = cmDict['MSG_TOPIC']
     logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
                 ' safeBucketName = ' + str(safeBucketName) + ' unsafeBucketName = ' + str(unsafeBucketName))
-
     s3_URL = cmDict['S3_URL']
+    logger.info('s3_URL = '+ str(s3_URL))
+
     keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
     s3Utils = S3utils(logger, keyId, secretKey, s3_URL)
     kafkaUtils = KafkaUtils(logger, msg_topic)

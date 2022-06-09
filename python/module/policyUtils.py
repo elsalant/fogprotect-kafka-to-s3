@@ -25,7 +25,8 @@ class PolicyUtils():
     def apply_policy(self, jsonDict):
         ## The use case does not have any policies on filtering the Kafka data.  The policies should no transformations
         policy = self.get_policies()
-        df = pd.json_normalize(jsonDict)
+  #      df = pd.json_normalize(jsonDict)
+        df = pd.DataFrame([jsonDict])
         self.logger.info(f'inside apply_policy. Length policies = ', str(len(policy)), " type(policy) = ", str(type(policy)))
         self.logger.info(f'policy = ', str(policy))
         if len(policy['transformations']) == 0:

@@ -1,6 +1,7 @@
 import boto3
 import uuid
 import tempfile
+import time
 
 BUCKET_PREFIX = '-fogprotect-'
 SEED = 'sm' # for file name
@@ -68,11 +69,15 @@ class S3utils:
 
     def get_resource_buckets(self, searchPrefix):
         # Get a bucket with a name that contains the passed prefix
-        bucketCollection = self.connection.buckets.all()
+        try:
+            bucketCollection = self.connection.buckets.all()
+        except:
+            self.logger.WARN('connection.buckets.all() fails!')
+            time.sleep(600)   # REMOVE THIS - debugging aid only
         bucketList = []
         for bucket in bucketCollection:
             bucketList.append(str(bucket.name))
         matchingBuckets = [s for s in bucketList if searchPrefix in s]
         if (matchingBuckets):
-            print("matchingBuckets = " + str(matchingBuckets))
+            self.logger.info("matchingBuckets = " + str(matchingBuckets))
         return matchingBuckets

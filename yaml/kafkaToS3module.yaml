@@ -21,8 +21,11 @@ spec:
         connection:
           name: kafka
           kafka:
-            kafka_topic_name: sm
-            kafka_bootstrap_servers: "kafka.fybrik-system:9092"
+            endpoint: ""
+            safe_bucket: "safe_bucket"
+            unsafe_bucket: "unsafe_bucket"
+            kafka_topic_name: "sm"
+            kafka_bootstrap_servers: kafka.fybrik-system:9092"
         dataFormat: json
       supportedInterfaces:
         - source:

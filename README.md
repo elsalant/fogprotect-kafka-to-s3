@@ -23,7 +23,8 @@ git pull https://github.com/elsalant/fogprotect-kafka-to-s3.git
 and change theshire to UK
 9. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
 10. [FIX]  kubectl apply -f charts/kafka-to-s3/templates/situation-status.yaml
-11. kubectl apply -f \<ROOT>/yaml/asset.yaml
+11. kubectl apply -f \<ROOT>/yaml/kafka_asset.yaml
+    kubectl apply -f \<ROOT>/yaml/s3_asset.yaml
 12. Edit s3-account.yaml and configure the endpoint for your s3 store, then apply:
 kubectl apply -f s3-account.yaml
 13. Apply the module
