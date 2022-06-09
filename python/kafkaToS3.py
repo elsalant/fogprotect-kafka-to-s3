@@ -3,6 +3,7 @@ import yaml
 import base64
 import logging
 import os
+import time
 
 from module.s3_utils import S3utils
 from module.kafka_utils import KafkaUtils
@@ -84,6 +85,7 @@ def main():
     for message in kafkaUtils.consumer:
         messageDict = message.value
         logger.info('Read from Kafka: ' + messageDict)
+        time.sleep(6000) # REMOVE THIS
         filteredData = policyUtils.apply_policy(messageDict)
 # The environment variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write

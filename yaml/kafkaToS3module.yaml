@@ -29,6 +29,9 @@ spec:
         dataFormat: json
       supportedInterfaces:
         - source:
+            protocol: s3
+            dataformat: json
+        - source:
             protocol: kafka
             dataformat: json
   chart:

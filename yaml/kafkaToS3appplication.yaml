@@ -19,7 +19,7 @@ spec:
         interface: 
           protocol: kafka
           dataformat: json
-   - dataSetID: "kafka-s3/sm-s3-data"
+    - dataSetID: "kafka-s3/sm-s3-data"
       requirements:
         interface:
           protocol: kafka
