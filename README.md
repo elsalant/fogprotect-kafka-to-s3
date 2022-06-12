@@ -29,7 +29,7 @@ and change theshire to UK
 kubectl apply -f s3-account.yaml
 13. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
-14. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!
+14. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!  
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
 14. Test
 - a) Send events to the Kafka queue  
@@ -61,8 +61,8 @@ make docker-push
 export HELM_EXPERIMENTAL_OCI=1  
 helm registry login -u elsalant -p \<PASSWORD> ghcr.io
 
-Package the chart: (cd charts)
-helm package kafka-to-s3 -d /tmp
+Package the chart: (cd charts)  
+helm package kafka-to-s3 -d /tmp  
 helm push /tmp/kafka-to-s3-chart-0.0.1.tgz oci://ghcr.io/elsalant
 
 ##### Development hints
