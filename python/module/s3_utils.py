@@ -44,7 +44,8 @@ class S3utils:
         # Generate a random prefix to the resource type
         fName = ''.join([str(uuid.uuid4().hex[:6]), SEED])
         self.write_to_bucket(bucketName, tempFile, fName)
-        self.logger.info(f"information written to bucket ", bucketName, ' as ', fName)
+        logStr = 'information written to bucket ' + bucketName + ' as ' + fName
+        self.logger.info(logStr)
         return None
 
     def write_to_bucket(self, bucketName, tempFile, fnameSeed):

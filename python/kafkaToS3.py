@@ -44,7 +44,7 @@ def readConfig(CM_PATH):
             with open(CM_PATH, 'r') as stream:
                 cmReturn = yaml.safe_load(stream)
         except Exception as e:
-            raise ValueError('Error reading from file! ', CM_PATH)
+            raise ValueError('Error reading from file! ' + CM_PATH)
     else:
         cmDict = {'MSG_TOPIC': 'sm', 'HEIR_KAFKA_HOST': 'kafka.fybrik-system:9092', 'VAULT_SECRET_PATH': None,
                   'SECRET_NSPACE': 'fybrik-system', 'SECRET_FNAME': 'credentials-els',
