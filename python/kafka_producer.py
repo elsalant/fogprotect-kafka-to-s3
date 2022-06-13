@@ -28,8 +28,10 @@ except Exception as e:
     print(e)
 try:
     producer.send(KAFKA_TOPIC, value=outString)
+    producer.flush()
 except Exception as e:
     print("Error sending "+outString+" to Kafka")
     print(e)
 
 print(outString + ' sent to Kafka topic ' + KAFKA_TOPIC + ' at ' + KAFKA_HOST)
+exit(0)

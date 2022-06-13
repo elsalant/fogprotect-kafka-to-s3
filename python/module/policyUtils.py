@@ -27,11 +27,11 @@ class PolicyUtils():
         policy = self.get_policies()
   #      df = pd.json_normalize(jsonDict)
         df = pd.DataFrame([jsonDict])
-        self.logger.info(f'inside apply_policy. Length policies = ', str(len(policy)), " type(policy) = ", str(type(policy)))
-        self.logger.info(f'policy = ', str(policy))
         if len(policy['transformations']) == 0:
             self.logger.warning(f'No actions found!')
             return (str(df.to_json()))
+        self.logger.info(f'inside apply_policy. Length policies = ', str(len(policy)), ' type(policy) = ', str(type(policy)))
+        self.logger.info(f'policy = ', str(policy))
         action = policy['transformations'][0]['action']
         if action == '':
             return (str(df.to_json()))

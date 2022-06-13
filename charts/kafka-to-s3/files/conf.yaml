@@ -13,7 +13,7 @@ data:
    VAULT_SECRET_PATH: {{ .Values.copy.destination.vault.secretPath }}
    SECRET_NSPACE: {{ .Values.copy.destination.credentialLocation.namespace }}
    SECRET_FNAME: {{ .Values.copy.destination.credentialLocation.secret_file }}
-   S3_URL: {{if .Values.copy.destination.connection.s3.endpoint}}http://{{end}}{{ .Values.copy.destination.connection.s3.endpoint }}
+   S3_URL: {{ .Values.copy.destination.connection.s3.endpoint }}
  {{- end }}
  {{- if .Values.copy.transformations }}
    transformations: 

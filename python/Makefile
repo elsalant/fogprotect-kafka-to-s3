@@ -15,11 +15,14 @@ export REPO_HOSTNAME ?= ghcr.io
 export REPO_USERNAME ?= elsalant
 
 DOCKER_IMG_NAME ?= kafka-to-s3
+PRODUCER_DOCKER_IMG_NAME ?= kafka-producer
 CHART_IMG_NAME ?= kafka-to-s3-chart
 DOCKER_FILE ?= Dockerfile
+PRODUCER_DOCKER_FILE ?= Dockerfile.producer
 DOCKER_CONTEXT ?= .
 DOCKER_LOCATION ?= build
 APP_IMG ?= ${REPO_HOSTNAME}/${REPO_USERNAME}/${DOCKER_IMG_NAME}:${DOCKER_TAGNAME}
+PRODUCER_APP_IMG ?= ${REPO_HOSTNAME}/${REPO_USERNAME}/${PRODUCER_DOCKER_IMG_NAME}:${DOCKER_TAGNAME}
 CHART_IMG ?= ${REPO_HOSTNAME}/${REPO_USERNAME}/${CHART_IMG_NAME}:${HELM_TAGNAME}
 CHART ?= ${DOCKER_IMG_NAME}
 
@@ -30,10 +33,18 @@ docker-all: docker-build docker-push
 docker-build:
 	docker build $(DOCKER_CONTEXT) -t ${APP_IMG} -f $(DOCKER_LOCATION)/$(DOCKER_FILE)
 
+.PHONY: docker-build-producer
+docker-build-producer:
+	docker build $(DOCKER_CONTEXT) -t ${PRODUCER_APP_IMG} -f $(DOCKER_LOCATION)/$(PRODUCER_DOCKER_FILE)
+
 .PHONY: docker-push
 docker-push:
 	docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ghcr.io/elsalant
 	docker push ${APP_IMG}
+
+.PHONY: docker-push-producer
+docker-push-producer:
+	docker push ${PRODUCER_APP_IMG}
 
 .PHONY: docker-rmi
 docker-rmi:

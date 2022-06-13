@@ -21,9 +21,9 @@ spec:
         connection:
           name: kafka
           kafka:
-            endpoint: ""
-            safe_bucket: "safe_bucket"
-            unsafe_bucket: "unsafe_bucket"
+            endpoint: "http://s3.eu.cloud-object-storage.appdomain.cloud"
+            safe_bucket: "safe-bucket"
+            unsafe_bucket: "unsafe-bucket"
             kafka_topic_name: "sm"
             kafka_bootstrap_servers: "kafka.fybrik-system:9092"
         dataFormat: json

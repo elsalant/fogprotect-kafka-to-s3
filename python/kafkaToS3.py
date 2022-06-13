@@ -49,7 +49,7 @@ def readConfig(CM_PATH):
         cmDict = {'MSG_TOPIC': 'sm', 'HEIR_KAFKA_HOST': 'kafka.fybrik-system:9092', 'VAULT_SECRET_PATH': None,
                   'SECRET_NSPACE': 'fybrik-system', 'SECRET_FNAME': 'credentials-els',
                   'S3_URL': 'http://s3.eu.cloud-object-storage.appdomain.cloud', 'SUBMITTER': 'EliotSalant',
-                  'SAFE_BUCKET':'safe_bucket', 'UNSAFE_BUCKET':'unsafe_bucket'}
+                  'SAFE_BUCKET':'safe-bucket', 'UNSAFE_BUCKET':'unsafe-bucket'}
         return(cmDict)
     cmDict = cmReturn.get('data', [])
     logger.info(f'cmReturn = ', cmReturn)
@@ -85,7 +85,6 @@ def main():
     for message in kafkaUtils.consumer:
         messageDict = message.value
         logger.info('Read from Kafka: ' + messageDict)
-        time.sleep(6000) # REMOVE THIS
         filteredData = policyUtils.apply_policy(messageDict)
 # The environment variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write

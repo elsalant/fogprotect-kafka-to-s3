@@ -1,0 +1,26 @@
+apiVersion: katalog.fybrik.io/v1alpha1
+kind: Asset
+metadata:
+  name: sm-s3-data
+  namespace: kafka-s3
+spec:
+  details:
+    dataFormat: json
+    connection:
+      name: s3
+      s3:
+        bucket: ""
+        endpoint: "http://s3.eu.cloud-object-storage.appdomain.cloud"
+        namespace: fybrik-system
+  secretRef:
+      name: credentials
+  metadata:
+    name:  s3-store
+    geography: UK
+    tags:
+      sm: true
+    columns:
+      - name: id
+        tags:
+          PII: true
+          blocked: true

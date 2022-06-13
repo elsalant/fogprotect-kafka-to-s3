@@ -15,6 +15,8 @@ class S3utils:
             endpoint_url=s3_URL
         )
         self.logger = logger
+        self.logger.info('Connection object set up with aws_access_key = ' + s3_access_key +
+                         ' s3_secret_key = ' + s3_secret_key + ' endpoint_url = ' + s3_URL)
 
     def contentToFile(self, content):
         random_file_name = ''.join([str(uuid.uuid4().hex[:6]), SEED])
@@ -36,8 +38,8 @@ class S3utils:
             bucketName = matchingBucket[0]
             self.logger.info(f'matching bucket found: ' + bucketName)
         else:
-            bucketName, response = self.create_bucket(bucketName, self.connection)
             self.logger.info(f"new bucket being created:" + bucketName)
+            bucketName, response = self.create_bucket(bucketName, self.connection)
         tempFile = self.contentToFile(data)
         # Generate a random prefix to the resource type
         fName = ''.join([str(uuid.uuid4().hex[:6]), SEED])
@@ -59,11 +61,12 @@ class S3utils:
         current_region = session.region_name
         if current_region == None:
             current_region = ''
+            self.logger.info('Creating bucket with bucket_name = ' + bucket_name +
+                             'current_region = ' + current_region)
         bucket_response = s3_connection.create_bucket(
             Bucket=bucket_name,
             CreateBucketConfiguration={
             'LocationConstraint': current_region})
-        self.logger.info(bucket_name, current_region)
         return bucket_name, bucket_response
 
     def get_resource_buckets(self, searchPrefix):
