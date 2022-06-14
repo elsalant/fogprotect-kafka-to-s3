@@ -62,7 +62,6 @@ def main():
     logger.info(f"starting module!!")
 
     CM_PATH = '/etc/conf/conf.yaml' # from the "volumeMounts" parameter in templates/deployment.yaml
-
     cmDict = readConfig(CM_PATH)
 
     # Get the connection details for S3 connection and then fire up the S3 object

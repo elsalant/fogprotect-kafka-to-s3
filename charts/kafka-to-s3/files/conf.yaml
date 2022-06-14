@@ -1,50 +1,85 @@
+{{ if .Values.assets -}}
 data:
-{{- if .Values.labels }}
-   SUBMITTER: {{ get .Values.labels "requestedBy" | default "requester-missing" }}
-{{- end }}
-{{- if .Values.copy -}}
- {{- if .Values.copy.source.connection.kafka }}
-   MSG_TOPIC: {{ .Values.copy.source.connection.kafka.kafka_topic_name }}
-   KAFKA_HOST: {{ .Values.copy.source.connection.kafka.kafka_bootstrap_servers }}
-   SAFE_BUCKET: {{ .Values.copy.source.connection.kafka.safe_bucket }}
-   UNSAFE_BUCKET: {{ .Values.copy.source.connection.kafka.unsafe_bucket }}
- {{- end }}
- {{- if .Values.copy.destination.connection.s3 }}
-   VAULT_SECRET_PATH: {{ .Values.copy.destination.vault.secretPath }}
-   SECRET_NSPACE: {{ .Values.copy.destination.credentialLocation.namespace }}
-   SECRET_FNAME: {{ .Values.copy.destination.credentialLocation.secret_file }}
-   S3_URL: {{ .Values.copy.destination.connection.s3.endpoint }}
- {{- end }}
- {{- if .Values.copy.transformations }}
-   transformations: 
-   {{- $redactColumns := list -}}
-   {{- $removeColumns := list -}}
-   {{- $Statistics := list -}}
-   {{- range .Values.copy.transformations -}}
-   {{- if eq .name "RedactColumn" -}}
-     {{- $redactColumns = .RedactColumn.columns -}}
-   {{- end -}}
-   {{- if eq .name "RemoveColumn" -}}
-    {{- $removeColumns = .RemoveColumn.columns -}}
-   {{- end -}}
-   {{- end -}}
- {{- if $redactColumns }}
-   - action: "RedactColumn"
-     description: "redacting columns: {{ $redactColumns }}"
-     columns: 
-     {{- range $redactColumns}}
-       - {{ . }}
-     {{- end }}
-     options:
-       redactValue: "XXXXX"
+  {{- if .Values.labels }}
+    SUBMITTER: {{ get .Values.labels "requestedBy" | default "requester-missing" }}
   {{- end }}
-  {{- if $removeColumns }}
-    - action: "RemoveColumn"
-      description: "removing columns: {{ $removeColumns }}"
-      columns: 
-      {{- range $removeColumns}}
-        - {{ . }}
-      {{- end }}
+{{- range $asset := .Values.assets }}
+  {{- if and (.args) (eq (len .args) 1) -}}
+  {{- with (index .args 0) }}
+  {{- if index . "connection" "kafka" }}
+    KAFKA_HOST: {{ .connection.kafka.kafka_bootstrap_servers }}
+    MSG_TOPIC: {{.connection.kafka.kafka_topic_name}}
+  {{- end }}
+  {{- if index . "connection" "s3" }}
+    S3_URL: {{ if not (contains "://" .connection.s3.endpoint)}}https://{{end}}{{ .connection.s3.endpoint }}
+    SECRET_NSPACE: {{ .connection.s3.namespace }}
+    SAFE_BUCKET: {{ .connection.s3.safeBucket }}
+    UNSAFE_BUCKET: {{ .connection.s3.unsafeBucket }}
+    SECRET_FNAME: {{ .connection.s3.credentialsFile }}
+    {{- end }}
   {{- end }}
   {{- end }}
+    {{- if $asset.transformations }}
+    transformations:
+    {{- $redactColumns := list -}}
+    {{- $removeColumns := list -}}
+    {{- $query := "" -}}
+    {{- $ageFilterColumns := list -}}
+    {{- $age := 0 -}}
+    {{- range $asset.transformations -}}
+      {{- if eq .name "RedactAction" -}}
+        {{- $redactColumns = .RedactAction.columns -}}
+      {{- end -}}
+      {{- if eq .name "RemoveAction" -}}
+        {{- $removeColumns = .RemoveAction.columns -}}
+      {{- end -}}
+      {{- if eq .name "FilterAction" -}}
+        {{- $query = .FilterAction.options.query -}}
+      {{- end -}}
+      {{- if eq .name "AgeFilterAction" -}}
+        {{- $ageFilterColumns = .AgeFilterAction.columns -}}
+        {{- $age = .AgeFilterAction.options.age -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if $redactColumns }}
+      - action: "Redact"
+        description: "redacting columns: {{ $redactColumns }}"
+        columns:
+          {{- range $redactColumns}}
+          - {{ . }}
+          {{- end }}
+        options:
+          redactValue: "XXXXX"
+    {{- end }}
+    {{- if $removeColumns }}
+      - action: "RemoveColumns"
+        description: "removing columns: {{ $removeColumns }}"
+        columns:
+          {{- range $removeColumns}}
+          - {{ . }}
+          {{- end }}
+    {{- end }}
+    {{- if $query }}
+      - action: "Filter"
+        description: "filtering based on query"
+        options:
+          query: "{{ $query }}"
+    {{- end }}
+    {{- if $ageFilterColumns }}
+      - action: "AgeFilter"
+        description: "filtering based on age"
+        columns:
+          {{- range $ageFilterColumns}}
+          - {{ . }}
+          {{- end }}
+        {{- if $age }}
+        options:
+          age: "{{ $age }}"
+        {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+{{- else -}}
+data: []
 {{- end -}}
+

@@ -15,12 +15,7 @@ spec:
    intent: research
   data:
     - dataSetID: "kafka-s3/sm-kafka-data"
-      requirements:
-        interface: 
-          protocol: kafka
-          dataformat: json
+      requirements: {}
     - dataSetID: "kafka-s3/sm-s3-data"
-      requirements:
-        interface:
-          protocol: kafka
-          dataformat: json
+      requirements: {}
+

@@ -9,11 +9,14 @@ spec:
     connection:
       name: s3
       s3:
-        bucket: ""
         endpoint: "http://s3.eu.cloud-object-storage.appdomain.cloud"
+        safeBucket: "safe-bucket"
+        unsafeBucket: "unsafe-bucket"
         namespace: fybrik-system
+        credentialsFile: credentials
   secretRef:
-      name: credentials
+    name: credentials
+    namespace: fybrik-system
   metadata:
     name:  s3-store
     geography: UK
