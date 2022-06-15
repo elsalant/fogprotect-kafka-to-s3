@@ -34,7 +34,9 @@ kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
 14. Test
 - a) Send events to the Kafka queue  
 kubectl apply -f kafka_producer.yaml 
-
+- b) Change the situation status:
+kubectl edit cm situationstatus -n fybrik-blueprints
+and toggle the "situation-status" value.
 
 #### Hints
 To test redaction: pick a field in the resource (e.g. "id") and set the tag in the asset.yaml file to "PII".
