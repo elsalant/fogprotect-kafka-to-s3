@@ -7,31 +7,31 @@ Do once:  make sure helm v3.7+ is installed
 Setting up a kind cluster - if required:
 > kind create cluster --name fogprotect-sm
 
-1. Install fybrik from the instructions in: https://fybrik.io/v0.6/get-started/quickstart/
-2. Start the Kafka server:  
+1. Install fybrik from the instructions in: https://fybrik.io/v0.7/get-started/quickstart/
+1. Start the Kafka server:  
    - helm install kafka bitnami/kafka -n fybrik-system  
-3. Create a namespace for the kafka-s3 demo:  
+1. Create a namespace for the kafka-s3 demo:  
 kubectl create namespace kafka-s3
-4. Pull the files:
+1. Pull the files:
 git pull https://github.com/elsalant/fogprotect-kafka-to-s3.git
-5. Install the policy:  
+1. Install the policy:  
 \<ROOT>/scripts/applyPolicy.sh
-6. Edit \<ROOT>/yaml/s3-credentials.yaml to input the correct S3 tokens
-7. Apply the S3 secrets and permissions  
+1. Edit \<ROOT>/yaml/s3-credentials.yaml to input the correct S3 tokens
+1. Apply the S3 secrets and permissions  
 \<ROOT>/scripts/deployS3secrets.sh 
-8. kubectl edit cm cluster-metadata -n fybrik-system
+1. kubectl edit cm cluster-metadata -n fybrik-system
 and change theshire to UK
+1. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
 9. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
-10. [FIX]  kubectl apply -f charts/kafka-to-s3/templates/situation-status.yaml
-11. kubectl apply -f \<ROOT>/yaml/kafka_asset.yaml
+1. kubectl apply -f \<ROOT>/yaml/kafka_asset.yaml 
     kubectl apply -f \<ROOT>/yaml/s3_asset.yaml
-12. Edit s3-account.yaml and configure the endpoint for your s3 store, then apply:
+1. Edit s3-account.yaml and configure the endpoint for your s3 store, then apply:
 kubectl apply -f s3-account.yaml
-13. Apply the module
+1. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
-14. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!  
+1. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!  
 kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
-14. Test
+1. Test
 - a) Send events to the Kafka queue  
 kubectl apply -f kafka_producer.yaml 
 - b) Change the situation status:
