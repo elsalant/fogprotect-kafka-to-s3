@@ -22,7 +22,7 @@ git pull https://github.com/elsalant/fogprotect-kafka-to-s3.git
 1. kubectl edit cm cluster-metadata -n fybrik-system
 and change theshire to UK
 1. kubectl apply -f https://raw.githubusercontent.com/datashim-io/datashim/master/release-tools/manifests/dlf.yaml
-1. kubectl apply -f \<ROOT>/yaml/kafka_asset.yaml 
+1. kubectl apply -f \<ROOT>/yaml/kafka_asset.yaml  
     kubectl apply -f \<ROOT>/yaml/s3_asset.yaml
 1. Edit s3-account.yaml and configure the endpoint for your s3 store, then apply:
 kubectl apply -f s3-account.yaml
