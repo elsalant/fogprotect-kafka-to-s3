@@ -6,7 +6,7 @@ import boto3
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
-TEST = False
+TEST = True
 DEFAULT_KAFKA_LOG_TOPIC = 'sm'
 if TEST:
     DEFAULT_KAFKA_HOST = 'localhost:9092'
@@ -26,8 +26,6 @@ class KafkaUtils:
         self.consumer = self.connect_to_kafka_consumer()
 
     def connect_to_kafka_consumer(self):
-        if TEST:
-            return
         consumer = None
         try:
             consumer = KafkaConsumer(

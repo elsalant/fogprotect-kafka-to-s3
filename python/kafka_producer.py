@@ -3,7 +3,7 @@ from random import seed
 from random import randint
 from json import dumps
 
-TEST = False
+TEST = True
 if TEST:
     KAFKA_HOST = 'localhost:9092'
 else:

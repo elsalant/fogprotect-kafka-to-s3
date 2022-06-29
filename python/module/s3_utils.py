@@ -1,9 +1,15 @@
 import boto3
 import uuid
 import tempfile
+import pyarrow as pa
+import pyarrow.parquet as pq
+import pandas as pd
 
 BUCKET_PREFIX = '-fogprotect-'
+PARQUET_SUFFIX = '.parquet'
 SEED = 'sm' # for file name
+
+PARQUET=True
 
 class S3utils:
 
@@ -21,9 +27,14 @@ class S3utils:
     def contentToFile(self, content):
         random_file_name = ''.join([str(uuid.uuid4().hex[:6]), SEED])
         try:
-            tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=".json", mode='w+t')
-            tempFile.write(content)
-            tempFile.seek(0)
+            tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=PARQUET_SUFFIX, mode='w+t')
+            if PARQUET:
+                df = pd.read_json(content, orient ='index')
+                df.columns = df.columns.astype(str)
+                df.to_parquet(tempFile.name)
+            else:
+                tempFile.write(content)
+                tempFile.seek(0)
         except Exception as e:
             tempFile.close()
             print("exception writing to tmpfile")
@@ -40,9 +51,9 @@ class S3utils:
         else:
             self.logger.info(f"new bucket being created:" + bucketName)
             bucketName, response = self.create_bucket(bucketName, self.connection)
-        tempFile = self.contentToFile(data)
         # Generate a random prefix to the resource type
         fName = ''.join([str(uuid.uuid4().hex[:6]), SEED])
+        tempFile = self.contentToFile(data)
         self.write_to_bucket(bucketName, tempFile, fName)
         logStr = 'information written to bucket ' + bucketName + ' as ' + fName
         self.logger.info(logStr)
@@ -50,8 +61,12 @@ class S3utils:
 
     def write_to_bucket(self, bucketName, tempFile, fnameSeed):
         try:
-            bucketObject = self.connection.Object(bucket_name=bucketName, key=fnameSeed)
-            self.logger.info(f"about to write to S3: bucketName = " + bucketName + " fnameSeed = " + fnameSeed)
+            if PARQUET:
+                objectName = fnameSeed+PARQUET_SUFFIX
+            else:
+                objectName=fnameSeed
+            bucketObject = self.connection.Object(bucket_name=bucketName, key=objectName)
+            self.logger.info(f"about to write to S3: bucketName = " + bucketName + " fnameSeed = " + objectName)
             bucketObject.upload_file(tempFile.name)
         finally:
             tempFile.close()
@@ -81,8 +96,8 @@ class S3utils:
             for bucket in bucketCollection:
                 bucketList.append(str(bucket.name))
         except:
-            self.logger.WARN('bucketCollection fails!')
-        matchingBuckets = [s for s in bucketList if searchPrefix in s]
+            self.logger.error('bucketCollection fails!')
+        matchingBuckets = [s for s in bucketList if searchPrefix == s]
         if (matchingBuckets):
             self.logger.info("matchingBuckets = " + str(matchingBuckets))
         return matchingBuckets

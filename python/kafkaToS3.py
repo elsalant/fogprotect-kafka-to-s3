@@ -15,7 +15,7 @@ ACCESS_DENIED_CODE = 403
 ERROR_CODE = 406
 VALID_RETURN = 200
 
-TEST = False   # allows testing outside of Fybrik/Kubernetes environment
+TEST = True   # allows testing outside of Fybrik/Kubernetes environment
 
 FIXED_SCHEMA_ROLE = 'missing role'
 FIXED_SCHEMA_ORG  = 'missing org'
@@ -29,14 +29,11 @@ def getSecretKeys(secret_name, secret_namespace):
     except:
         config.load_kube_config()   # useful for testing outside of k8s
     v1 = client.CoreV1Api()
-    if TEST:
-        return ("change-me", "change-me")
-    else:
-        logger.info('secret_name = ' + secret_name + ' secret_namespace = ' + secret_namespace)
-        secret = v1.read_namespaced_secret(secret_name, secret_namespace)
-        accessKeyID = base64.b64decode(secret.data['access_key'])
-        secretAccessKey = base64.b64decode(secret.data['secret_key'])
-        return(accessKeyID.decode('ascii'), secretAccessKey.decode('ascii'))
+    logger.info('secret_name = ' + secret_name + ' secret_namespace = ' + secret_namespace)
+    secret = v1.read_namespaced_secret(secret_name, secret_namespace)
+    accessKeyID = base64.b64decode(secret.data['access_key'])
+    secretAccessKey = base64.b64decode(secret.data['secret_key'])
+    return(accessKeyID.decode('ascii'), secretAccessKey.decode('ascii'))
 
 def readConfig(CM_PATH):
     if not TEST:
@@ -97,6 +94,7 @@ def main():
             bucketName = unsafeBucketName
         else:
             raise Exception('situationStatus = '+situationStatus)
+        # Convert filterData to a dataframe in order to export as Parquet
         s3Utils.write_to_S3(bucketName, filteredData)
 
 if __name__ == "__main__":
