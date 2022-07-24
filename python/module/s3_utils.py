@@ -29,8 +29,12 @@ class S3utils:
         try:
             tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=PARQUET_SUFFIX, mode='w+t')
             if PARQUET:
-                df = pd.read_json(content, orient ='index')
-                df.columns = df.columns.astype(str)
+            # pd.read_json format is dependent on the JSON structure.  If it is a flat json, then read_json with no
+            # orient argument expects a list.
+            # If it is embedded JSON, then orient='index' is required
+            # Assume a flat JSON structure here
+                content1 = '['+content+']'
+                df = pd.read_json(content1)
                 df.to_parquet(tempFile.name)
             else:
                 tempFile.write(content)

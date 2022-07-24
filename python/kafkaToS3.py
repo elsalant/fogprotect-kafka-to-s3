@@ -15,10 +15,13 @@ ACCESS_DENIED_CODE = 403
 ERROR_CODE = 406
 VALID_RETURN = 200
 
-TEST = True   # allows testing outside of Fybrik/Kubernetes environment
+TEST = False   # allows testing outside of Fybrik/Kubernetes environment
+TESTING_SITUATION_STATUS = 'safe'
 
 FIXED_SCHEMA_ROLE = 'missing role'
 FIXED_SCHEMA_ORG  = 'missing org'
+
+CM_SITUATION_PATH = '/etc/confmap/situationstatus.yaml'
 
 logger = logging.getLogger(__name__)
 cmDict = {}
@@ -43,7 +46,7 @@ def readConfig(CM_PATH):
         except Exception as e:
             raise ValueError('Error reading from file! ' + CM_PATH)
     else:
-        cmDict = {'MSG_TOPIC': 'sm', 'HEIR_KAFKA_HOST': 'kafka.fybrik-system:9092', 'VAULT_SECRET_PATH': None,
+        cmDict = {'MSG_TOPIC': 'sm', 'KAFKA_HOST': 'kafka.fybrik-system:9092', 'VAULT_SECRET_PATH': None,
                   'SECRET_NSPACE': 'fybrik-system', 'SECRET_FNAME': 'credentials-els',
                   'S3_URL': 'http://s3.eu.cloud-object-storage.appdomain.cloud', 'SUBMITTER': 'EliotSalant',
                   'SAFE_BUCKET':'safe-bucket', 'UNSAFE_BUCKET':'unsafe-bucket'}
@@ -82,9 +85,9 @@ def main():
         messageDict = message.value
         logger.info('Read from Kafka: ' + messageDict)
         filteredData = policyUtils.apply_policy(messageDict)
-# The environment variable, SITUATION_STATUS, is created from a config map and can be externally changed.
+# The external variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write
-        situationStatus = os.getenv('SITUATION_STATUS')
+        situationStatus = getSituationStatus()
         if TEST:
             situationStatus = 'safe'
         assert(situationStatus)
@@ -95,7 +98,21 @@ def main():
         else:
             raise Exception('situationStatus = '+situationStatus)
         # Convert filterData to a dataframe in order to export as Parquet
-        s3Utils.write_to_S3(bucketName, filteredData)
+ #       s3Utils.write_to_S3(bucketName, filteredData)
+        s3Utils.write_to_S3(bucketName, messageDict)
 
+def getSituationStatus():
+    if not TEST:
+        try:
+            with open(CM_SITUATION_PATH, 'r') as stream:
+                cmReturn = yaml.safe_load(stream)
+                situationStatus = cmReturn['situation-status']
+        except Exception as e:
+            errorStr = 'Error reading from file! ' + CM_SITUATION_PATH
+            raise ValueError(errorStr)
+    else:
+        situationStatus = TESTING_SITUATION_STATUS
+    logger.info('situationStatus being returned as ' + situationStatus)
+    return situationStatus
 if __name__ == "__main__":
     main()

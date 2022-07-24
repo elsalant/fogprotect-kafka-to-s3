@@ -7,7 +7,7 @@ Do once:  make sure helm v3.7+ is installed
 Setting up a kind cluster - if required:
 > kind create cluster --name fogprotect-sm
 
-1. Install fybrik from the instructions in: https://fybrik.io/v0.6/get-started/quickstart/
+1. Install fybrik from the instructions in: https://fybrik.io/v0.7/get-started/quickstart/
 2. Start the Kafka server:  
    - helm install kafka bitnami/kafka -n fybrik-system  
 3. Create a namespace for the kafka-s3 demo:  
@@ -30,7 +30,7 @@ kubectl apply -f s3-account.yaml
 13. Apply the module
 kubectl apply -f \<ROOT>/yaml/kafkaToS3module.yaml  
 14. Apply the application - note that the name (or JWT) for the requester is in the label.requestedBy field!  
-kubectl apply -f \<ROOT>/yaml/kafakToS3application.yaml
+kubectl apply -f \<ROOT>/yaml/kafkaToS3application.yaml
 14. Test
 - a) Send events to the Kafka queue  
 kubectl apply -f kafka_producer.yaml 

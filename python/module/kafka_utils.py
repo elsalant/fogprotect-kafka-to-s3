@@ -6,7 +6,7 @@ import boto3
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 
-TEST = True
+TEST = False
 DEFAULT_KAFKA_LOG_TOPIC = 'sm'
 if TEST:
     DEFAULT_KAFKA_HOST = 'localhost:9092'

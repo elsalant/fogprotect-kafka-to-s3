@@ -39,20 +39,20 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             # Define the environment variable to set the situational status
-            - name: SITUATION_STATUS
-              # from the key name in the ConfigMap.
-              valueFrom:
-                configMapKeyRef:
-                  name: situationstatus        # The ConfigMap this value comes from.
-                  key: situation-status # The key to fetch.
           volumeMounts:
             - readOnly: true
               mountPath: /etc/conf
               name: config
+            - readOnly: true
+              mountPath: /etc/confmap
+              name: situationstatus
       volumes:
         - name: config
           configMap:
             name: {{ include "kafka-to-s3.fullname" . }}
+        - name: situationstatus
+          configMap:
+            name: situationstatus
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
