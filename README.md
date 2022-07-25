@@ -9,7 +9,7 @@ Setting up a kind cluster - if required:
 
 1. Install fybrik from the instructions in: https://fybrik.io/v0.7/get-started/quickstart/
 2. Start the Kafka server:  
-   - helm install kafka bitnami/kafka -n fybrik-system  
+   - helm install kafka bitnami/kafka -n fybrik-system --set persistence.enabled=false  
 3. Create a namespace for the kafka-s3 demo:  
 kubectl create namespace kafka-s3
 4. Pull the files:

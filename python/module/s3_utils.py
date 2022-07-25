@@ -7,9 +7,10 @@ import pandas as pd
 
 BUCKET_PREFIX = '-fogprotect-'
 PARQUET_SUFFIX = '.parquet'
+CSV_SUFFIX = '.csv'
 SEED = 'sm' # for file name
 
-PARQUET=True
+PARQUET=False
 
 class S3utils:
 
@@ -26,23 +27,34 @@ class S3utils:
 
     def contentToFile(self, content):
         random_file_name = ''.join([str(uuid.uuid4().hex[:6]), SEED])
+        if PARQUET:
+            suffix = PARQUET_SUFFIX
+        else:
+            suffix = CSV_SUFFIX
         try:
-            tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=PARQUET_SUFFIX, mode='w+t')
+            tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=suffix, mode='w+t')
+            # Convert input to a dictionary
+  #          inputDict = json.loads(content.replace('\n', ''))
+            content1 = '[' + content + ']'
+            df = pd.read_json(content1)
             if PARQUET:
             # pd.read_json format is dependent on the JSON structure.  If it is a flat json, then read_json with no
             # orient argument expects a list.
             # If it is embedded JSON, then orient='index' is required
             # Assume a flat JSON structure here
-                content1 = '['+content+']'
-                df = pd.read_json(content1)
+ #               content1 = '['+content+']'
+ #               df = pd.read_json(content1)
                 df.to_parquet(tempFile.name)
             else:
-                tempFile.write(content)
-                tempFile.seek(0)
+                df.to_csv(tempFile.name)
+  #              tempFile.write(content)
+  #              tempFile.seek(0)
         except Exception as e:
             tempFile.close()
             print("exception writing to tmpfile")
+            print('content1 = ' + content1)
             print(e)
+            return('ERROR')
         return tempFile
 
     def write_to_S3(self, bucketName, data):
@@ -58,6 +70,9 @@ class S3utils:
         # Generate a random prefix to the resource type
         fName = ''.join([str(uuid.uuid4().hex[:6]), SEED])
         tempFile = self.contentToFile(data)
+        if tempFile == 'ERROR':
+            self.logger.info('No file being written out - bad input')
+            return None
         self.write_to_bucket(bucketName, tempFile, fName)
         logStr = 'information written to bucket ' + bucketName + ' as ' + fName
         self.logger.info(logStr)
