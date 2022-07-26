@@ -10,8 +10,8 @@ spec:
       name: s3
       s3:
         endpoint: "http://s3.eu.cloud-object-storage.appdomain.cloud"
-        safeBucket: "safe-bucket"
-        unsafeBucket: "unsafe-bucket"
+        safeBucket: "smartmanufacturing-safe-bucket"
+        unsafeBucket: "smartmanufacturing-unsafe-bucket"
         namespace: fybrik-system
         credentialsFile: credentials
   secretRef:
