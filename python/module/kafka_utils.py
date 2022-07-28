@@ -32,7 +32,7 @@ class KafkaUtils:
                 self.kafkaMsgTopic,
                 bootstrap_servers=[self.kafkaHost],
                 group_id='els',
-                auto_offset_reset='latest',  #earliest
+                auto_offset_reset='earliest',  #latest
                 enable_auto_commit=True,
                 value_deserializer=lambda x: loads(x.decode('utf-8')))
         except:

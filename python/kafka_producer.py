@@ -92,7 +92,7 @@ outString = """{
         },
         {
             "arm": "left",
-            "job": false
+            "job": "FALSE"
         }
     ],
     "RobotJointAngle": {
@@ -100,32 +100,32 @@ outString = """{
             {
                 "arm": "right",
                 "axis": 1,
-                "value": "0.00041"
+                "value": 0.00041
             },
             {
                 "arm": "right",
                 "axis": 2,
-                "value": "-129.99992"
+                "value": -129.99992
             },
             {
                 "arm": "right",
                 "axis": 3,
-                "value": "30.00097"
+                "value": 30.00097
             },
             {
                 "arm": "right",
                 "axis": 4,
-                "value": "-0.00102"
+                "value": -0.00102
             },
             {
                 "arm": "right",
                 "axis": 5,
-                "value": "40.00035"
+                "value": 40.00035
             },
             {
                 "arm": "right",
                 "axis": 6,
-                "value": "0.00008"
+                "value": 0.00008
             },
             {
                 "arm": "left",
@@ -164,32 +164,32 @@ outString = """{
             {
                 "arm": "right",
                 "axis": 1,
-                "value": ""
+                "value": 0.2
             },
             {
                 "arm": "right",
                 "axis": 2,
-                "value": "0.06681"
+                "value": 0.06681
             },
             {
                 "arm": "right",
                 "axis": 3,
-                "value": "-0.033"
+                "value": -0.033
             },
             {
                 "arm": "right",
                 "axis": 4,
-                "value": "0.000"
+                "value": 0.000
             },
             {
                 "arm": "right",
                 "axis": 5,
-                "value": "0.053"
+                "value": 0.053
             },
             {
                 "arm": "right",
                 "axis": 6,
-                "value": "-0.052"
+                "value": -0.052
             },
             {
                 "arm": "left",
@@ -228,32 +228,32 @@ outString = """{
             {
                 "arm": "right",
                 "axis": 1,
-                "value": ""
+                "value": 0
             },
             {
                 "arm": "right",
                 "axis": 2,
-                "value": "-4.940"
+                "value": -4.940
             },
             {
                 "arm": "right",
                 "axis": 3,
-                "value": "4.093"
+                "value": 4.093
             },
             {
                 "arm": "right",
                 "axis": 4,
-                "value": "0.977"
+                "value": 0.977
             },
             {
                 "arm": "right",
                 "axis": 5,
-                "value": "-0.031"
+                "value": -0.031
             },
             {
                 "arm": "right",
                 "axis": 6,
-                "value": "0.133"
+                "value": 0.133
             },
             {
                 "arm": "left",
@@ -292,17 +292,17 @@ outString = """{
             {
                 "count": "FALSE",
                 "type": "body",
-                "value": ""
+                "value": 0
             },
             {
                 "count": "FALSE",
                 "type": "lid",
-                "value": "2"
+                "value": 2
             },
             {
                 "count": "FALSE",
                 "type": "pcb",
-                "value": "2"
+                "value": 2
             }
         ]
     },

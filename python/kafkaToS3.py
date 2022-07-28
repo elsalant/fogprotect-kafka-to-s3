@@ -65,16 +65,23 @@ def main():
     cmDict = readConfig(CM_PATH)
 
     # Get the connection details for S3 connection and then fire up the S3 object
-    secret_namespace = cmDict['SECRET_NSPACE']
-    secret_fname = cmDict['SECRET_FNAME']
-    safeBucketName = cmDict['SAFE_BUCKET']
-    unsafeBucketName = cmDict['UNSAFE_BUCKET']
-    msg_topic = cmDict['MSG_TOPIC']
-    logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
+    try:
+        secret_namespace = cmDict['SECRET_NSPACE']
+        secret_fname = cmDict['SECRET_FNAME']
+        safeBucketName = cmDict['SAFE_BUCKET']
+        unsafeBucketName = cmDict['UNSAFE_BUCKET']
+        msg_topic = cmDict['MSG_TOPIC']
+        logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
                 ' safeBucketName = ' + str(safeBucketName) + ' unsafeBucketName = ' + str(unsafeBucketName))
-    s3_URL = cmDict['S3_URL']
-    logger.info('s3_URL = '+ str(s3_URL))
-
+        s3_URL = cmDict['S3_URL']
+        logger.info('s3_URL = '+ str(s3_URL))
+    except:
+        logger.info('Error reading from ' + CM_PATH)
+        print('--- CM_PATH contents')
+        f = open(CM_PATH, 'r')
+        content = f.read()
+        print(content)
+        f.close()
     keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
     s3Utils = S3utils(logger, keyId, secretKey, s3_URL)
     kafkaUtils = KafkaUtils(logger, msg_topic)

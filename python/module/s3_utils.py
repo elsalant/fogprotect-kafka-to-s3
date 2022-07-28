@@ -4,13 +4,14 @@ import tempfile
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
+import json
 
 BUCKET_PREFIX = '-fogprotect-'
 PARQUET_SUFFIX = '.parquet'
 CSV_SUFFIX = '.csv'
 SEED = 'sm' # for file name
 
-PARQUET=False
+PARQUET=True
 
 class S3utils:
 
@@ -33,9 +34,9 @@ class S3utils:
             suffix = CSV_SUFFIX
         try:
             tempFile = tempfile.NamedTemporaryFile(prefix=random_file_name, suffix=suffix, mode='w+t')
-            # Convert input to a dictionary
-  #          inputDict = json.loads(content.replace('\n', ''))
-            content1 = '[' + content + ']'
+            #dump the whole input into a string, and then put into a dataframe with a single entry
+
+            content1 = json.dumps([content])
             df = pd.read_json(content1)
             if PARQUET:
             # pd.read_json format is dependent on the JSON structure.  If it is a flat json, then read_json with no
@@ -44,6 +45,7 @@ class S3utils:
             # Assume a flat JSON structure here
  #               content1 = '['+content+']'
  #               df = pd.read_json(content1)
+                df.columns = df.columns.astype(str)
                 df.to_parquet(tempFile.name)
             else:
                 df.to_csv(tempFile.name)
