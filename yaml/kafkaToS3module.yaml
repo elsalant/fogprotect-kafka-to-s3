@@ -13,14 +13,19 @@ metadata:
 spec:
   type:  service  
   capabilities:
+    - capability: write
+      actions:
+        - name: RedactColumn
+        - name: BlockResource
+      supportedInterfaces:
+        - sink:
+            protocol: s3
+            dataformat: json
     - capability: read
       actions:
         - name: RedactColumn
         - name: BlockResource
       supportedInterfaces:
-        - source:
-            protocol: s3
-            dataformat: json
         - source:
             protocol: kafka
             dataformat: json

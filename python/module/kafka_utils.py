@@ -32,7 +32,7 @@ class KafkaUtils:
                 self.kafkaMsgTopic,
                 bootstrap_servers=[self.kafkaHost],
                 group_id='els',
-                auto_offset_reset='earliest',  #latest
+                auto_offset_reset='latest',  #latest
                 enable_auto_commit=True,
                 value_deserializer=lambda x: loads(x.decode('utf-8')))
         except:
@@ -46,7 +46,7 @@ class KafkaUtils:
         try:
             producer = KafkaProducer(
                 bootstrap_servers=[self.kafkaHost],
-                request_timeout_ms=2000
+                request_timeout_ms=2000,
             )  # , value_serializer=lambda x:json.dumps(x).encode('utf-8'))
         except Exception as e:
             self.logger.warning(f"\n--->WARNING: Connection to Kafka failed.  Is the server on " + self.kafkaHost + " running?")

@@ -17,5 +17,6 @@ spec:
     - dataSetID: "kafka-s3/sm-kafka-data"
       requirements: {}
     - dataSetID: "kafka-s3/sm-s3-data"
+      flow: write
       requirements: {}
 
