@@ -14,13 +14,13 @@ else:
     DEFAULT_KAFKA_HOST = 'kafka.fybrik-system:9092'
 
 class KafkaUtils:
-    def __init__(self, logger, msgTopic):
+    def __init__(self, msgTopic):
+        self.logger = logging.getLogger(__name__)
         self.kafkaHost = os.getenv("FOGPROTECT_self.kafkaHost") if os.getenv("FOGPROTECT_self.kafkaHost") else DEFAULT_KAFKA_HOST
         self.kafkaLogTopic = os.getenv("SM_self.kafkaLogTopic") if os.getenv("SM_self.kafkaLogTopic") \
             else DEFAULT_KAFKA_LOG_TOPIC
         self.kafkaMsgTopic = os.getenv("SM_self.kafkaLogTopic") if os.getenv("SM_self.kafkaLogTopic") \
             else msgTopic
-        self.logger = logger
         self.kafkaDisabled = True
         self.producer = self.connect_to_kafka_producer()
         self.consumer = self.connect_to_kafka_consumer()
@@ -34,6 +34,8 @@ class KafkaUtils:
                 group_id='els',
                 auto_offset_reset='latest',  #latest
                 enable_auto_commit=True,
+                session_timeout_ms=6000,  # Detects a failure of the consumer
+                max_poll_interval_ms=150000, # how long it can take the processing thread to complete.  Need this big...
                 value_deserializer=lambda x: loads(x.decode('utf-8')))
         except:
             raise Exception("Kafka did not connect for host " + self.kafkaHost + " and  topic " + self.kafkaMsgTopic)
@@ -45,8 +47,7 @@ class KafkaUtils:
         global kafkaDisabled
         try:
             producer = KafkaProducer(
-                bootstrap_servers=[self.kafkaHost],
-                request_timeout_ms=2000,
+                bootstrap_servers=[self.kafkaHost]
             )  # , value_serializer=lambda x:json.dumps(x).encode('utf-8'))
         except Exception as e:
             self.logger.warning(f"\n--->WARNING: Connection to Kafka failed.  Is the server on " + self.kafkaHost + " running?")

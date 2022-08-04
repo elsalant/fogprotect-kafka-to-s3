@@ -83,9 +83,9 @@ def main():
         print(content)
         f.close()
     keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
-    s3Utils = S3utils(logger, keyId, secretKey, s3_URL)
-    kafkaUtils = KafkaUtils(logger, msg_topic)
-    policyUtils = PolicyUtils(logger)
+    s3Utils = S3utils(keyId, secretKey, s3_URL)
+    kafkaUtils = KafkaUtils(msg_topic)
+    policyUtils = PolicyUtils()
 
 # Listen on the Kafka queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
     for message in kafkaUtils.consumer:
@@ -105,7 +105,6 @@ def main():
         else:
             raise Exception('situationStatus = '+situationStatus)
         # Convert filterData to a dataframe in order to export as Parquet
- #       s3Utils.write_to_S3(bucketName, filteredData)
         s3Utils.write_to_S3(bucketName, messageDict)
 
 def getSituationStatus():

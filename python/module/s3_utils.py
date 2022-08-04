@@ -5,6 +5,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
 import json
+import logging
 
 BUCKET_PREFIX = '-fogprotect-'
 PARQUET_SUFFIX = '.parquet'
@@ -15,14 +16,14 @@ PARQUET=True
 
 class S3utils:
 
-    def __init__(self, logger, s3_access_key,s3_secret_key, s3_URL):
+    def __init__(self, s3_access_key,s3_secret_key, s3_URL):
+        self.logger = logging.getLogger(__name__)
         self.connection = boto3.resource(
             's3',
             aws_access_key_id=s3_access_key,
             aws_secret_access_key=s3_secret_key,
-            endpoint_url=s3_URL
+            endpoint_url=s3_URL,
         )
-        self.logger = logger
         self.logger.info('Connection object set up with aws_access_key = ' + s3_access_key +
                          ' s3_secret_key = ' + s3_secret_key + ' endpoint_url = ' + s3_URL)
 

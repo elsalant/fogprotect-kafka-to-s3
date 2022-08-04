@@ -1,12 +1,13 @@
 import pandas as pd
 import json
+import logging
 
 TEST = True
 VALID_RETURN = 200
 
 class PolicyUtils():
-    def __init__(self, logger):
-        self.logger = logger
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
 
     def get_policies(self):
         #TODO

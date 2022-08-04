@@ -9,7 +9,7 @@ Setting up a kind cluster - if required:
 
 1. Install fybrik from the instructions in: https://fybrik.io/v0.7/get-started/quickstart/
 1. Start the Kafka server without persisting data:  
-   - helm install kafka bitnami/kafka -n fybrik-system --set persistence.enabled=false  
+   - helm install kafka bitnami/kafka -n fybrik-system --set persistence.enabled=false  --set zookeeperConnectionTimeoutMs=60000
 1. Create a namespace for the kafka-s3 demo:  
 kubectl create namespace kafka-s3
 1. Pull the files:
