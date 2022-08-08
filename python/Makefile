@@ -31,7 +31,7 @@ docker-all: docker-build docker-push
 
 .PHONY: docker-build
 docker-build:
-	docker build $(DOCKER_CONTEXT) -t ${APP_IMG} -f $(DOCKER_LOCATION)/$(DOCKER_FILE)
+	DOCKER_BUILDKIT=1 docker build $(DOCKER_CONTEXT) -t ${APP_IMG} -f $(DOCKER_LOCATION)/$(DOCKER_FILE)
 
 .PHONY: docker-build-producer
 docker-build-producer:
