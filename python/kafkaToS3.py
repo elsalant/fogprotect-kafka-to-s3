@@ -6,7 +6,7 @@ import os
 import time
 
 from module.s3_utils import S3utils
-from module.kafka_utils import KafkaUtils
+from module.kafka_utils import createKafkaConsumer
 from module.policyUtils import PolicyUtils
 
 FLASK_PORT_NUM = 5559  # this application
@@ -71,6 +71,7 @@ def main():
         safeBucketName = cmDict['SAFE_BUCKET']
         unsafeBucketName = cmDict['UNSAFE_BUCKET']
         msg_topic = cmDict['MSG_TOPIC']
+        kafka_host = cmDict['KAFKA_HOST']
         logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
                 ' safeBucketName = ' + str(safeBucketName) + ' unsafeBucketName = ' + str(unsafeBucketName))
         s3_URL = cmDict['S3_URL']
@@ -84,13 +85,19 @@ def main():
         f.close()
     keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
     s3Utils = S3utils(keyId, secretKey, s3_URL)
-    kafkaUtils = KafkaUtils(msg_topic)
+    consumer = createKafkaConsumer(msg_topic, kafka_host)
     policyUtils = PolicyUtils()
 
 # Listen on the Kafka queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
-    for message in kafkaUtils.consumer:
+    #while True:
+    #    message_batch = kafkaUtils.consumer.poll()  # Ref: https://www.thebookofjoel.com/python-kafka-consumers
+    #    kafkaUtils.consumer.commit()
+    #    for topic_partition, partition_batch in message_batch.items():
+    #        for message in partition_batch:
+    for message in consumer:
         messageDict = message.value
-        logger.info('Read from Kafka: ' + messageDict)
+        logger.info('Read from Kafka: ')
+        print(messageDict.items())
         filteredData = policyUtils.apply_policy(messageDict)
 # The external variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write
@@ -106,6 +113,7 @@ def main():
             raise Exception('situationStatus = '+situationStatus)
         # Convert filterData to a dataframe in order to export as Parquet
         s3Utils.write_to_S3(bucketName, messageDict)
+    logging.info('--> finished reading from Kafka')
 
 def getSituationStatus():
     if not TEST:

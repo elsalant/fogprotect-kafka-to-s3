@@ -1,8 +1,8 @@
 import boto3
 import uuid
 import tempfile
-import pyarrow as pa
-import pyarrow.parquet as pq
+#import pyarrow as pa
+#import pyarrow.parquet as pq
 import pandas as pd
 import json
 import logging
@@ -40,14 +40,9 @@ class S3utils:
             content1 = json.dumps([content])
             df = pd.read_json(content1)
             if PARQUET:
-            # pd.read_json format is dependent on the JSON structure.  If it is a flat json, then read_json with no
-            # orient argument expects a list.
-            # If it is embedded JSON, then orient='index' is required
-            # Assume a flat JSON structure here
- #               content1 = '['+content+']'
- #               df = pd.read_json(content1)
                 df.columns = df.columns.astype(str)
                 df.to_parquet(tempFile.name)
+                print(df)
             else:
                 df.to_csv(tempFile.name)
   #              tempFile.write(content)
@@ -58,6 +53,7 @@ class S3utils:
             print('content1 = ' + content1)
             print(e)
             return('ERROR')
+        logging.info('information written to tmpfile' + str(tempFile.name))
         return tempFile
 
     def write_to_S3(self, bucketName, data):
@@ -86,7 +82,7 @@ class S3utils:
             if PARQUET:
                 objectName = fnameSeed+PARQUET_SUFFIX
             else:
-                objectName=fnameSeed
+                objectName=fnameSeed+CSV_SUFFIX
             bucketObject = self.connection.Object(bucket_name=bucketName, key=objectName)
             self.logger.info(f"about to write to S3: bucketName = " + bucketName + " fnameSeed = " + objectName)
             bucketObject.upload_file(tempFile.name)

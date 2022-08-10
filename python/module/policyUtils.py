@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import logging
 
-TEST = True
+TEST = False
 VALID_RETURN = 200
 
 class PolicyUtils():
@@ -24,11 +24,11 @@ class PolicyUtils():
         return policies
 
     def apply_policy(self, jsonDict):
-        ## The use case does not have any policies on filtering the Kafka data.  The policies should no transformations
+        ## The use case does not have any policies on filtering the Kafka data.  The policies should have no transformations
         policy = self.get_policies()
   #      df = pd.json_normalize(jsonDict)
         df = pd.DataFrame([jsonDict])
-        if len(policy['transformations']) == 0:
+        if policy == '' or len(policy['transformations']) == 0:
             self.logger.warning(f'No actions found!')
             return (str(df.to_json()))
         self.logger.info(f'inside apply_policy. Length policies = ' + str(len(policy)) + ' type(policy) = ' + str(type(policy)))

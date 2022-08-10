@@ -13,61 +13,53 @@ if TEST:
 else:
     DEFAULT_KAFKA_HOST = 'kafka.fybrik-system:9092'
 
-class KafkaUtils:
-    def __init__(self, msgTopic):
-        self.logger = logging.getLogger(__name__)
-        self.kafkaHost = os.getenv("FOGPROTECT_self.kafkaHost") if os.getenv("FOGPROTECT_self.kafkaHost") else DEFAULT_KAFKA_HOST
-        self.kafkaLogTopic = os.getenv("SM_self.kafkaLogTopic") if os.getenv("SM_self.kafkaLogTopic") \
-            else DEFAULT_KAFKA_LOG_TOPIC
-        self.kafkaMsgTopic = os.getenv("SM_self.kafkaLogTopic") if os.getenv("SM_self.kafkaLogTopic") \
-            else msgTopic
-        self.kafkaDisabled = True
-        self.producer = self.connect_to_kafka_producer()
-        self.consumer = self.connect_to_kafka_consumer()
+logger = logging.getLogger(__name__)
+#kafkaHost = os.getenv("FOGPROTECT_kafkaHost") if os.getenv("FOGPROTECT_kafkaHost") else DEFAULT_KAFKA_HOST
+#kafkaLogTopic = os.getenv("SM_kafkaLogTopic") if os.getenv("SM_kafkaLogTopic") \
+#    else DEFAULT_KAFKA_LOG_TOPIC
+kafkaDisabled = True
+consumer = None
 
-    def connect_to_kafka_consumer(self):
-        consumer = None
-        try:
-            consumer = KafkaConsumer(
-                self.kafkaMsgTopic,
-                bootstrap_servers=[self.kafkaHost],
-                group_id='els',
-                auto_offset_reset='latest',  #latest
-                enable_auto_commit=True,
-                session_timeout_ms=6000,  # Detects a failure of the consumer
-                max_poll_interval_ms=150000, # how long it can take the processing thread to complete.  Need this big...
-                value_deserializer=lambda x: loads(x.decode('utf-8')))
-        except:
-            raise Exception("Kafka did not connect for host " + self.kafkaHost + " and  topic " + self.kafkaMsgTopic)
+def createKafkaConsumer(kafkaMsgTopic, kafkaHost):
+    try:
+        consumer = KafkaConsumer(
+            kafkaMsgTopic,
+            bootstrap_servers=[kafkaHost],
+            group_id='els',
+            auto_offset_reset='latest',  #latest
+            enable_auto_commit=True,
+            value_deserializer=lambda x: loads(x.decode('utf-8')))
+    except:
+        raise Exception("Kafka did not connect for host " + kafkaHost + " and  topic " + kafkaMsgTopic)
 
-        self.logger.info(f"Connection to kafka at host " + self.kafkaHost + " and  topic " + self.kafkaMsgTopic + " succeeded!")
-        return consumer
-    
-    def connect_to_kafka_producer(self):
-        global kafkaDisabled
-        try:
-            producer = KafkaProducer(
-                bootstrap_servers=[self.kafkaHost]
-            )  # , value_serializer=lambda x:json.dumps(x).encode('utf-8'))
-        except Exception as e:
-            self.logger.warning(f"\n--->WARNING: Connection to Kafka failed.  Is the server on " + self.kafkaHost + " running?")
-            self.logger.warning(e)
-            self.kafkaDisabled = True
-            return None
-        self.kafkaDisabled = False
-        self.logger.info(f"Connection to Kafka succeeded! " + self.kafkaHost)
-        return(producer)
+    logger.info(f"Connection to kafka at host " + kafkaHost + " and  topic " + kafkaMsgTopic + " succeeded!")
+    return consumer
 
-    def writeToKafka(self, jString):
-        if self.kafkaDisabled:
-            self.logger.info(f"Kafka topic: " + self.kafkaLogTopic + " log string: " + jString)
-            self.logger.warning(f"But kafka is disabled...")
-            return None
-        jSONoutBytes = str.encode(jString)
-        try:
-            self.logger.info(f"Writing to Kafka queue " + self.kafkaLogTopic + ": " + jString)
-            self.producer.send(self.kafkaLogTopic, value=jSONoutBytes)  # to the SIEM
-        except Exception as e:
-            self.logger.warning(f"Write to Kafka logging failed.  Is the server on " + self.kafkaLogTopic + " running?")
-            self.logger.info(e)
+def connect_to_kafka_producer(kafkaHost):
+    global producer, kafkaDisabled
+    try:
+        producer = KafkaProducer(
+            bootstrap_servers=[kafkaHost]
+        )  # , value_serializer=lambda x:json.dumps(x).encode('utf-8'))
+    except Exception as e:
+        logger.warning(f"\n--->WARNING: Connection to Kafka failed.  Is the server on " + kafkaHost + " running?")
+        logger.warning(e)
+        kafkaDisabled = True
         return None
+    kafkaDisabled = False
+    logger.info(f"Connection to Kafka succeeded! " + kafkaHost)
+    return(producer)
+
+def writeToKafka(jString, kafkaLogTopic):
+    if kafkaDisabled:
+        logger.info(f"Kafka topic: " + kafkaLogTopic + " log string: " + jString)
+        logger.warning(f"But kafka is disabled...")
+        return None
+    jSONoutBytes = str.encode(jString)
+    try:
+        logger.info(f"Writing to Kafka queue " + kafkaLogTopic + ": " + jString)
+        producer.send(kafkaLogTopic, value=jSONoutBytes)  # to the SIEM
+    except Exception as e:
+        logger.warning(f"Write to Kafka logging failed.  Is the server on " + kafkaLogTopic + " running?")
+        logger.info(e)
+    return None
