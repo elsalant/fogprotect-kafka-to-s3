@@ -2,6 +2,7 @@ from kafka import KafkaProducer
 from random import seed
 from random import randint
 from json import dumps
+from datetime import datetime
 
 TEST = False
 if TEST:
@@ -36,10 +37,9 @@ outString = '''
 			"without_helmet": 2
 		}
 	},
-	"timestamp": "2022-08-05 07:25:04.370756",
-	"production_secure": false
-}
-'''
+	''' + '"timestamp" : "' + str(datetime.now()) + '", ' + \
+            '\n\t"production_secure": false ' + \
+    "\n}"
 
 print("about to connect to " + KAFKA_HOST + ' writing to topic ' + KAFKA_TOPIC)
 try:
