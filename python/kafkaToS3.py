@@ -70,7 +70,8 @@ def main():
         secret_fname = cmDict['SECRET_FNAME']
         safeBucketName = cmDict['SAFE_BUCKET']
         unsafeBucketName = cmDict['UNSAFE_BUCKET']
-        msg_topic = cmDict['MSG_TOPIC']
+        manufacturing_topic = cmDict['MANUFACTURING_DATA_TOPIC']
+        logging_topic = cmDict['LOG_TOPIC']
         kafka_host = cmDict['KAFKA_HOST']
         logger.info('secret_namespace = ' + str(secret_namespace) + ' secret_fname = ' + str(secret_fname) +
                 ' safeBucketName = ' + str(safeBucketName) + ' unsafeBucketName = ' + str(unsafeBucketName))
@@ -85,10 +86,10 @@ def main():
         f.close()
     keyId, secretKey = getSecretKeys(secret_fname, secret_namespace)
     s3Utils = S3utils(keyId, secretKey, s3_URL)
-    consumer = createKafkaConsumer(msg_topic, kafka_host)
+    consumer = createKafkaConsumer(manufacturing_topic, kafka_host)
     policyUtils = PolicyUtils()
 
-# Listen on the Kafka queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
+# Listen on the Kafka manufacturing queue for ever. When a message comes in, determine the "Status" env and write to S3 bucket accordingly
     #while True:
     #    message_batch = kafkaUtils.consumer.poll()  # Ref: https://www.thebookofjoel.com/python-kafka-consumers
     #    kafkaUtils.consumer.commit()
@@ -97,7 +98,6 @@ def main():
     for message in consumer:
         messageDict = message.value
         logger.info('Read from Kafka: ')
-        print(messageDict.items())
         filteredData = policyUtils.apply_policy(messageDict)
 # The external variable, SITUATION_STATUS, is created from a config map and can be externally changed.
 # The value of this env determines to which bucket to write

@@ -9,7 +9,8 @@ spec:
     connection:
       name: kafka
       kafka:
-        kafka_topic_name: sm
+        kafka_manufacturing_topic: manufacturing-events
+        kafka_log_topic: sm
         kafka_bootstrap_servers: "kafka.fybrik-system:9092"
         namespace: fybrik-system
   secretRef:

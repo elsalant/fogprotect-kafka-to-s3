@@ -8,7 +8,8 @@ data:
   {{- with (index .args 0) }}
   {{- if index . "connection" "kafka" }}
     KAFKA_HOST: {{ .connection.kafka.kafka_bootstrap_servers }}
-    MSG_TOPIC: {{.connection.kafka.kafka_topic_name}}
+    MANUFACTURING_DATA_TOPIC: {{.connection.kafka.kafka_manufacturing_topic}}
+    LOG_TOPIC: {{.connection.kafka.kafka_log_topic}}
   {{- end }}
   {{- if index . "connection" "s3" }}
     S3_URL: {{ if not (contains "://" .connection.s3.endpoint)}}https://{{end}}{{ .connection.s3.endpoint }}

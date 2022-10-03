@@ -1,4 +1,5 @@
 from kafka import KafkaProducer
+from kafka.errors import KafkaError
 from random import seed
 from random import randint
 from json import dumps
@@ -8,8 +9,9 @@ TEST = False
 if TEST:
     KAFKA_HOST = 'localhost:9092'
 else:
-    KAFKA_HOST = 'kafka.fybrik-system:9092'
-KAFKA_TOPIC = 'sm'
+#    KAFKA_HOST = 'kafka.fybrik-system:9092'
+    KAFKA_HOST = '192.168.1.242:9092'
+KAFKA_TOPIC = 'manufacturing-events'
 
 FNAMES = ['Jim', 'John', 'Joan', 'Jack']
 LNAMES = ['Smith', 'Jones', 'Parker', 'Henderson']
@@ -50,11 +52,17 @@ except Exception as e:
     print('Connecting to Kafka failed!')
     print(e)
 try:
-    producer.send(KAFKA_TOPIC, value=outString)
+    future = producer.send(KAFKA_TOPIC, value=outString)
     producer.flush()
 except Exception as e:
     print("Error sending "+outString+" to Kafka")
     print(e)
+# Wait for send to complete
+try:
+    record_metadata = future.get(timeout=10)
+except KafkaError:
+    print('Error on completing of Kafka write')
+    exit(0)
 
 print(outString + ' sent to Kafka topic ' + KAFKA_TOPIC + ' at ' + KAFKA_HOST)
 exit(0)

@@ -26,13 +26,13 @@ def createKafkaConsumer(kafkaMsgTopic, kafkaHost):
             kafkaMsgTopic,
             bootstrap_servers=[kafkaHost],
             group_id='els',
-            auto_offset_reset='latest',  #latest
+            auto_offset_reset='earliest',  #latest
             enable_auto_commit=True,
             value_deserializer=lambda x: loads(x.decode('utf-8')))
     except:
         raise Exception("Kafka did not connect for host " + kafkaHost + " and  topic " + kafkaMsgTopic)
 
-    logger.info(f"Connection to kafka at host " + kafkaHost + " and  topic " + kafkaMsgTopic + " succeeded!")
+    logger.info(f"-- > Connection to kafka consumer at host " + kafkaHost + " and  topic " + kafkaMsgTopic + " succeeded!")
     return consumer
 
 def connect_to_kafka_producer(kafkaHost):
